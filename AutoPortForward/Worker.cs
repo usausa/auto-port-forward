@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 using Renci.SshNet;
 using Renci.SshNet.Common;
 
-internal class Worker : BackgroundService
+internal sealed class Worker : BackgroundService
 {
     private readonly ILogger<Worker> log;
 
