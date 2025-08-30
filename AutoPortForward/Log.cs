@@ -13,4 +13,20 @@ internal static partial class Log
 
     [LoggerMessage(Level = LogLevel.Information, Message = "ThreadPool: workerThreads=[{workerThreads}], completionPortThreads=[{completionPortThreads}]")]
     public static partial void InfoServiceSettingsThreadPool(this ILogger logger, int workerThreads, int completionPortThreads);
+
+    // Information
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Client connected.")]
+    public static partial void InfoClientConnected(this ILogger logger);
+
+    // Error
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "Connect failed.")]
+    public static partial void ErrorConnectFailed(this ILogger logger, Exception ex);
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "Unhandled exception.")]
+    public static partial void ErrorUnhandledException(this ILogger logger, Exception ex);
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "Error occurred.")]
+    public static partial void ErrorErrorOccurred(this ILogger logger, Exception ex);
 }
