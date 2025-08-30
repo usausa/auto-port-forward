@@ -1,6 +1,5 @@
 namespace AutoPortForward;
 
-#pragma warning disable CA1812
 internal sealed class PortForwardsSetting
 {
     public bool Remote { get; set; }
@@ -32,4 +31,3 @@ internal sealed class SshSetting
 
     public PortForwardsSetting[] PortForwards { get; set; } = default!;
 }
-#pragma warning restore CA1812
