@@ -21,6 +21,14 @@ internal class Worker : BackgroundService
         this.setting = setting.Value;
     }
 
+    public override void Dispose()
+    {
+        base.Dispose();
+
+        client?.Dispose();
+    }
+
+#pragma warning disable CA1031
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var reconnectDelay = TimeSpan.FromSeconds(setting.ReconnectDelay);
@@ -47,9 +55,13 @@ internal class Worker : BackgroundService
                 log.ErrorUnhandledException(e);
             }
 
+            client?.Dispose();
+            client = null;
+
             await Task.Delay(reconnectDelay, stoppingToken);
         }
     }
+#pragma warning restore CA1031
 
     private async ValueTask SetupConnection(CancellationToken stoppingToken)
     {
@@ -66,9 +78,11 @@ internal class Worker : BackgroundService
 
             foreach (var forward in setting.PortForwards)
             {
+#pragma warning disable CA2000
                 var forwardedPort = forward.Remote
                     ? (ForwardedPort)new ForwardedPortRemote(forward.BoundHost, forward.BoundPort, forward.Host, forward.Port)
                     : new ForwardedPortLocal(forward.BoundHost, forward.BoundPort, forward.Host, forward.Port);
+#pragma warning restore CA2000
                 client.AddForwardedPort(forwardedPort);
                 forwardedPort.Start();
             }
