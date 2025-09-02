@@ -25,6 +25,8 @@ internal sealed class SshSetting
 
     public string? PassPhase { get; set; }
 
+    public bool DisableCompression { get; set; } = true;
+
     public int KeepAliveInterval { get; set; } = 30;
 
     public int ReconnectDelay { get; set; } = 10;

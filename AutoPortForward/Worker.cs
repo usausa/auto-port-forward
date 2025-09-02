@@ -67,10 +67,18 @@ internal sealed class Worker : BackgroundService
     {
         try
         {
-            client = new SshClient(setting.Host, setting.Port, setting.Username, new PrivateKeyFile(setting.PrivateKey, setting.PassPhase));
-            client.ErrorOccurred += ClientOnErrorOccurred;
+            var ci = new ConnectionInfo(setting.Host, setting.Port, setting.Username, new PrivateKeyAuthenticationMethod(setting.Username, new PrivateKeyFile(setting.PrivateKey, setting.PassPhase)));
+            if (setting.DisableCompression)
+            {
+                ci.CompressionAlgorithms.Clear();
+                ci.CompressionAlgorithms.Add("none", null);
+            }
 
-            client.KeepAliveInterval = TimeSpan.FromSeconds(setting.KeepAliveInterval);
+            client = new SshClient(ci)
+            {
+                KeepAliveInterval = TimeSpan.FromSeconds(setting.KeepAliveInterval)
+            };
+            client.ErrorOccurred += ClientOnErrorOccurred;
 
             await client.ConnectAsync(stoppingToken);
 
