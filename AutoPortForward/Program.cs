@@ -18,7 +18,7 @@ builder.Services.AddSerilog(options =>
     options.ReadFrom.Configuration(builder.Configuration);
 });
 
-// Storage
+// Setting
 builder.Services.Configure<SshSetting>(builder.Configuration.GetSection("SSH"));
 
 // Worker
