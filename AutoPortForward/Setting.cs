@@ -23,7 +23,7 @@ internal sealed class SshSetting
 
     public string PrivateKey { get; set; } = default!;
 
-    public string? PassPhase { get; set; }
+    public string? Passphrase { get; set; }
 
     public bool DisableCompression { get; set; } = true;
 

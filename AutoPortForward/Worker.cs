@@ -67,7 +67,7 @@ internal sealed class Worker : BackgroundService
     {
         try
         {
-            var ci = new ConnectionInfo(setting.Host, setting.Port, setting.Username, new PrivateKeyAuthenticationMethod(setting.Username, new PrivateKeyFile(setting.PrivateKey, setting.PassPhase)));
+            var ci = new ConnectionInfo(setting.Host, setting.Port, setting.Username, new PrivateKeyAuthenticationMethod(setting.Username, new PrivateKeyFile(setting.PrivateKey, setting.Passphrase)));
             if (setting.DisableCompression)
             {
                 ci.CompressionAlgorithms.Clear();
