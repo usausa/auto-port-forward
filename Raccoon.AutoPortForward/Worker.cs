@@ -11,7 +11,9 @@ internal sealed class Worker : BackgroundService
 
     private readonly SshSetting setting;
 
+#pragma warning disable CA2213
     private SshClient? client;
+#pragma warning restore CA2213
 
     private TaskCompletionSource<bool>? disconnectSignal;
 
@@ -25,9 +27,9 @@ internal sealed class Worker : BackgroundService
 
     public override void Dispose()
     {
-        base.Dispose();
+        DisposeClient();
 
-        client?.Dispose();
+        base.Dispose();
     }
 
 #pragma warning disable CA1031
@@ -71,8 +73,7 @@ internal sealed class Worker : BackgroundService
             {
                 Volatile.Write(ref disconnectSignal, null);
 
-                client?.Dispose();
-                client = null;
+                DisposeClient();
             }
 
             if (stoppingToken.IsCancellationRequested)
@@ -131,17 +132,35 @@ internal sealed class Worker : BackgroundService
         }
         catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
         {
-            client?.Dispose();
-            client = null;
+            DisposeClient();
             throw;
         }
         catch (Exception e)
         {
             log.ErrorConnectFailed(e);
 
-            client?.Dispose();
-            client = null;
+            DisposeClient();
             throw;
+        }
+    }
+
+    private void DisposeClient()
+    {
+        var currentClient = Interlocked.Exchange(ref client, null);
+        if (currentClient is null)
+        {
+            return;
+        }
+
+        currentClient.ErrorOccurred -= ClientOnErrorOccurred;
+
+        try
+        {
+            currentClient.Dispose();
+        }
+        catch (SshException e)
+        {
+            log.WarningClientDisposalFailed(e, e.GetType().Name);
         }
     }
 
